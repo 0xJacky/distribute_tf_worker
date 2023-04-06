@@ -8,8 +8,9 @@ import (
 )
 
 type Task struct {
-	ID  int    `json:"id"`
-	Url string `json:"url"`
+	ID        int    `json:"id"`
+	Url       string `json:"url"`
+	RequestID string `json:"request_id"`
 }
 
 var taskChan = make(chan Task, 20)
@@ -66,9 +67,10 @@ func Handle(c *websocket.Conn, done chan struct{}, mutex *sync.Mutex) {
 			type res map[string]interface{}
 			mutex.Lock()
 			err = c.WriteJSON(&res{
-				"id":     task.ID,
-				"name":   name,
-				"status": status,
+				"id":         task.ID,
+				"name":       name,
+				"request_id": task.RequestID,
+				"status":     status,
 			})
 			mutex.Unlock()
 			if err != nil {
